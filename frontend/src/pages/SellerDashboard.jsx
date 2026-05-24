@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import * as api from '../api';
-import { uploadImage } from '../supabase';
 import { useAuth } from '../context/AuthContext';
 import s from './SellerDashboard.module.css';
 
