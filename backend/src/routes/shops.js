@@ -45,6 +45,22 @@ router.get('/all', requireAdmin, async (req, res) => {
   }
 });
 
+// GET /shops/mine/info — infos de la boutique de la vendeuse connectée
+router.get('/mine/info', requireSeller, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('shops')
+      .select(`*, products(*), sales(*)`)
+      .eq('user_id', req.user.id)
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // GET /shops/:id — une boutique avec ses produits (public)
 router.get('/:id', async (req, res) => {
   try {
