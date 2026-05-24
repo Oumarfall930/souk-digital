@@ -100,3 +100,29 @@
   .formGrid { grid-template-columns:1fr; }
   .toast { bottom:1rem; }
 }
+
+/* Photo principale */
+.mainPhotoBox { border:2px dashed var(--border2); border-radius:12px; padding:1rem; text-align:center; cursor:pointer; transition:border-color .2s; min-height:160px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.mainPhotoBox:hover { border-color:var(--gold); }
+.mainPhotoPreview { width:100%; max-height:200px; object-fit:cover; border-radius:8px; }
+.mainPhotoPlaceholder { color:var(--text3); }
+.mainPhotoPlaceholder p { font-size:13px; margin-top:.5rem; }
+.uploadingMsg { color:var(--text3); font-size:14px; }
+
+/* Couleurs avec photos */
+.colorPhotoList { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+.colorPhotoItem { display:flex; align-items:center; justify-content:space-between; background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 14px; flex-wrap:wrap; gap:8px; }
+.colorPhotoLeft { display:flex; align-items:center; gap:10px; }
+.colorDotLg { width:24px; height:24px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; }
+.colorPhotoName { font-size:13px; color:var(--text2); }
+.colorPhotoRight { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.colorPhotoThumb { width:48px; height:48px; object-fit:cover; border-radius:8px; border:2px solid var(--gold); }
+.colorPhotoEmpty { font-size:11px; color:var(--text3); padding:4px 8px; background:var(--bg4); border-radius:6px; }
+
+/* Produit card */
+.productThumb { width:56px; height:56px; object-fit:cover; border-radius:10px; border:2px solid var(--gold); flex-shrink:0; }
+
+/* Couleur dots avec photo */
+.colorDotWrap { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.colorPhotoThumbSm { width:32px; height:32px; object-fit:cover; border-radius:6px; border:2px solid var(--gold); }
+.colorDotLabel { font-size:10px; color:var(--text3); max-width:50px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

@@ -11,6 +11,7 @@ export default function ShopPage() {
   const [modal, setModal]         = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize]   = useState(null);
+  const [displayImage, setDisplayImage]   = useState(null);
 
   useEffect(() => {
     getShop(id).then(data => { setShop(data); setLoading(false); })
@@ -19,8 +20,17 @@ export default function ShopPage() {
 
   function openProduct(product) {
     setModal(product);
-    setSelectedColor(product.colors?.[0] || null);
+    const firstColor = product.colors?.[0] || null;
+    setSelectedColor(firstColor);
     setSelectedSize(product.sizes?.[0] || null);
+    // Afficher photo de la première couleur ou photo principale
+    setDisplayImage(firstColor?.image || product.image || null);
+  }
+
+  function handleColorSelect(color) {
+    setSelectedColor(color);
+    // Changer l'image selon la couleur sélectionnée
+    setDisplayImage(color.image || modal?.image || null);
   }
 
   function orderWhatsApp() {
@@ -82,11 +92,13 @@ export default function ShopPage() {
           <div className={s.grid}>
             {activeProducts.map(product => {
               const minPrice = Math.min(...(product.sizes || []).map(s => s.price));
+              const firstColorImage = product.colors?.[0]?.image;
+              const mainImg = firstColorImage || product.image;
               return (
                 <div key={product.id} className={s.productCard} onClick={() => openProduct(product)}>
                   <div className={s.productImg}>
-                    {product.image
-                      ? <img src={product.image} alt={product.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                    {mainImg
+                      ? <img src={mainImg} alt={product.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
                       : <span>{product.emoji}</span>
                     }
                     <span className={s.priceBadge}>À partir de {minPrice} MRU</span>
@@ -96,7 +108,9 @@ export default function ShopPage() {
                     <p className={s.productDesc}>{product.description}</p>
                     <div className={s.colors}>
                       {(product.colors || []).map((c, i) => (
-                        <div key={i} className={s.colorDot} style={{ background: c.hex }} title={c.name} />
+                        c.image
+                          ? <img key={i} src={c.image} alt={c.name} title={c.name} style={{width:20,height:20,borderRadius:'50%',objectFit:'cover',border:'2px solid var(--border)'}} />
+                          : <div key={i} className={s.colorDot} style={{ background: c.hex }} title={c.name} />
                       ))}
                     </div>
                     <div className={s.sizes}>
@@ -121,31 +135,38 @@ export default function ShopPage() {
               <button className={s.closeBtn} onClick={() => setModal(null)}>✕</button>
             </div>
 
-            {/* Photo ou emoji */}
+            {/* Photo qui change selon la couleur */}
             <div className={s.modalImg}>
-              {modal.image
-                ? <img src={modal.image} alt={modal.name} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:12}} />
+              {displayImage
+                ? <img src={displayImage} alt={modal.name} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:12,transition:'opacity .3s'}} />
                 : <span style={{fontSize:'4rem'}}>{modal.emoji}</span>
               }
             </div>
 
             {modal.description && <p className={s.modalDesc}>{modal.description}</p>}
 
-            {/* Couleurs */}
+            {/* Couleurs — cliquer change la photo */}
             <div className={s.formGroup}>
-              <label className={s.label}>Couleur</label>
+              <label className={s.label}>Couleur {selectedColor && <span style={{color:'var(--gold)'}}>— {selectedColor.name}</span>}</label>
               <div className={s.swatches}>
                 {(modal.colors || []).map((c, i) => (
-                  <button
-                    key={i}
-                    className={`${s.swatch} ${selectedColor?.hex === c.hex ? s.swatchActive : ''}`}
-                    style={{ background: c.hex }}
-                    title={c.name}
-                    onClick={() => setSelectedColor(c)}
-                  />
+                  <div key={i} className={s.colorSwatchWrap} onClick={() => handleColorSelect(c)}>
+                    {c.image
+                      ? <img
+                          src={c.image}
+                          alt={c.name}
+                          title={c.name}
+                          className={`${s.colorPhotoSwatch} ${selectedColor?.hex === c.hex ? s.colorPhotoSwatchActive : ''}`}
+                        />
+                      : <button
+                          className={`${s.swatch} ${selectedColor?.hex === c.hex ? s.swatchActive : ''}`}
+                          style={{ background: c.hex }}
+                          title={c.name}
+                        />
+                    }
+                  </div>
                 ))}
               </div>
-              {selectedColor && <p className={s.colorName}>{selectedColor.name}</p>}
             </div>
 
             {/* Tailles */}
