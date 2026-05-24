@@ -1,5 +1,5 @@
 // ── API base URL ──
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 function getToken() {
   return localStorage.getItem('souk_token');
