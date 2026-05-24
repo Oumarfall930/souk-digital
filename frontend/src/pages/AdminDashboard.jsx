@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as api from '../api';
-import { uploadImage } from '../supabase';
+import { uploadImage } from '../api/upload';
 import s from './AdminDashboard.module.css';
 
 const TABS = [
