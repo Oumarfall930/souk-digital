@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as api from '../api';
+import { uploadImage } from '../api/upload';
 import { useAuth } from '../context/AuthContext';
 import s from './SellerDashboard.module.css';
 
