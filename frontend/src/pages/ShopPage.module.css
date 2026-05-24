@@ -1,0 +1,80 @@
+.loading { text-align:center; padding:4rem; color:var(--text3); }
+.spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 1rem; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.header { background:var(--bg2); border-bottom:1px solid var(--border); padding:1.25rem 1.5rem; }
+.backBtn { background:none; border:none; color:var(--text3); font-size:13px; margin-bottom:1rem; display:flex; align-items:center; gap:6px; transition:color .2s; padding:0; min-height:40px; }
+.backBtn:hover { color:var(--text); }
+.boutiqueInfo { display:flex; gap:1.25rem; align-items:center; flex-wrap:wrap; }
+.avatar { width:72px; height:72px; border-radius:16px; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:2.5rem; border:2px solid var(--gold); flex-shrink:0; }
+.shopName { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,4vw,2rem); margin-bottom:4px; }
+.shopDesc { color:var(--text2); font-size:13px; margin-bottom:8px; }
+.payments { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.payLabel { font-size:11px; color:var(--text3); }
+.payTag { background:var(--bg4); border:1px solid var(--border); color:var(--text3); font-size:11px; padding:3px 10px; border-radius:20px; }
+
+.content { padding:1.25rem 1.5rem; max-width:1200px; margin:0 auto; }
+.sectionTitle { font-family:'Playfair Display',serif; font-size:clamp(1.3rem,3vw,1.8rem); margin-bottom:4px; }
+.sectionSub { color:var(--text3); font-size:13px; margin-bottom:1.5rem; }
+.empty { text-align:center; padding:3rem; color:var(--text3); font-size:2.5rem; }
+.empty p { font-size:13px; margin-top:1rem; }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr)); gap:1.25rem; }
+.productCard { background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; cursor:pointer; transition:all .25s; animation:fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; } }
+.productCard:hover { border-color:var(--gold); transform:translateY(-3px); }
+.productImg { height:180px; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:4rem; position:relative; }
+.priceBadge { position:absolute; bottom:10px; right:10px; background:var(--gold); color:#0f0e0b; font-weight:700; padding:4px 10px; border-radius:20px; font-size:12px; }
+.productBody { padding:1rem; }
+.productName { font-weight:600; font-size:14px; margin-bottom:4px; }
+.productDesc { color:var(--text3); font-size:12px; line-height:1.4; margin-bottom:8px; min-height:28px; }
+.colors { display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+.colorDot { width:16px; height:16px; border-radius:50%; border:2px solid var(--border); }
+.sizes { display:flex; gap:5px; flex-wrap:wrap; }
+.sizeChip { background:var(--bg4); border:1px solid var(--border); color:var(--text2); font-size:11px; padding:3px 8px; border-radius:6px; }
+
+/* Modal */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200; display:flex; align-items:flex-end; justify-content:center; padding:0; backdrop-filter:blur(4px); }
+.modal { background:var(--bg2); border:1px solid var(--border2); border-radius:24px 24px 0 0; padding:1.5rem; width:100%; max-width:560px; max-height:92dvh; overflow-y:auto; animation:slideUp .3s ease; }
+@keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+.modalHeader { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; }
+.modalTitle { font-family:'Playfair Display',serif; font-size:1.3rem; }
+.closeBtn { background:var(--bg3); border:1px solid var(--border); color:var(--text3); width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all .2s; }
+.modalImg { height:150px; background:var(--bg3); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:4rem; margin-bottom:1rem; border:1px solid var(--border); }
+.modalDesc { color:var(--text3); font-size:13px; line-height:1.5; margin-bottom:1rem; }
+.formGroup { margin-bottom:1rem; }
+.label { display:block; font-size:12px; color:var(--text3); margin-bottom:8px; font-weight:500; text-transform:uppercase; letter-spacing:.5px; }
+.swatches { display:flex; gap:10px; flex-wrap:wrap; }
+.swatch { width:36px; height:36px; border-radius:50%; border:3px solid transparent; outline:2px solid transparent; transition:all .15s; }
+.swatchActive { border-color:white; outline-color:var(--gold); transform:scale(1.15); }
+.colorName { font-size:12px; color:var(--gold); margin-top:6px; }
+.sizePriceGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }
+.sizePrice { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:10px 8px; text-align:center; transition:all .2s; cursor:pointer; min-height:60px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.sizePrice:hover, .sizePriceActive { border-color:var(--gold); background:var(--bg4); }
+.sizeName { display:block; font-size:11px; color:var(--text3); margin-bottom:4px; }
+.sizeVal { display:block; font-size:14px; font-weight:600; color:var(--gold); }
+.paymentBox { background:var(--bg3); border-radius:10px; padding:.85rem; margin-bottom:1rem; border:1px solid var(--border); }
+.payTags { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.wpBtn { background:var(--wp); color:white; border:none; width:100%; padding:16px; border-radius:14px; font-size:16px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; transition:all .2s; min-height:56px; }
+.wpBtn:hover { filter:brightness(1.1); }
+.wpBtn:active { transform:scale(.98); }
+
+@media (min-width: 600px) {
+  .overlay { align-items:center; padding:1rem; }
+  .modal { border-radius:20px; max-height:88vh; }
+  .header { padding:1.5rem 2rem; }
+  .content { padding:1.5rem 2rem; }
+  .productImg { height:200px; }
+}
+
+@media (max-width: 480px) {
+  .header { padding:1rem; }
+  .content { padding:1rem; }
+  .grid { grid-template-columns:1fr 1fr; gap:.75rem; }
+  .productImg { height:140px; font-size:3rem; }
+  .avatar { width:60px; height:60px; font-size:2rem; }
+}
+
+@media (max-width: 360px) {
+  .grid { grid-template-columns:1fr; }
+}

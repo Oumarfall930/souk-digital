@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Souk Digital — Marketplace WhatsApp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <nav>
+    <div class="logo" onclick="showPage('home')" style="cursor:pointer">✦ Souk Digital</div>
+    <div class="nav-links" id="navLinks">
+      <button class="btn btn-outline btn-sm" onclick="showPage('login')">Connexion</button>
+    </div>
+  </nav>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE : LOGIN
+  ═══════════════════════════════════════ -->
+  <div class="page active" id="page-login">
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-logo">✦</div>
+        <h2>Connexion</h2>
+        <p>Accédez à votre espace</p>
+        <div class="role-pills">
+          <div class="role-pill active" onclick="selectRole('admin', this)">👑 Admin</div>
+          <div class="role-pill" onclick="selectRole('vendeuse', this)">🏪 Vendeuse</div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="votre@email.com" value="admin@souk.ma">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="loginPass" placeholder="••••••••" value="admin123">
+        </div>
+        <div id="shopSelectWrap" style="display:none" class="form-group">
+          <label>Votre boutique</label>
+          <select id="shopSelect"></select>
+        </div>
+        <button class="btn btn-gold w-full" style="margin-top:1rem" onclick="doLogin()">Se connecter</button>
+        <button class="btn btn-ghost w-full" style="margin-top:.5rem" onclick="showPage('home')">← Voir les boutiques</button>
+
+        <div class="login-hint">
+          <p><strong>Admin :</strong> admin@souk.ma / admin123</p>
+          <p><strong>Vendeuse :</strong> Choisir boutique / pass123 (Yasmine) ou khadija123 (Khadija)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE : HOME (VITRINE PUBLIQUE)
+  ═══════════════════════════════════════ -->
+  <div class="page" id="page-home">
+    <div class="hero">
+      <div class="hero-badge">🛍️ Marketplace Marocain</div>
+      <h1>Découvrez les <span class="gold-text">meilleures boutiques</span></h1>
+      <p>Commandez directement auprès des vendeurs via WhatsApp — simple, rapide et personnel</p>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Rechercher une boutique..." oninput="filterShops()">
+      </div>
+    </div>
+
+    <div class="home-content">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Boutiques disponibles</div>
+          <div class="section-sub" id="shopCount">Chargement...</div>
+        </div>
+        <div class="filter-pills">
+          <span class="filter-pill active" onclick="filterCategory('all',this)">Toutes</span>
+          <span class="filter-pill" onclick="filterCategory('mode',this)">Mode</span>
+          <span class="filter-pill" onclick="filterCategory('maison',this)">Maison</span>
+          <span class="filter-pill" onclick="filterCategory('beaute',this)">Beauté</span>
+        </div>
+      </div>
+      <div class="shops-grid" id="shopsGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE : BOUTIQUE INDIVIDUELLE
+  ═══════════════════════════════════════ -->
+  <div class="page" id="page-boutique">
+    <div class="boutique-header" id="boutiqueHeader"></div>
+    <div class="home-content">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Nos produits</div>
+          <div class="section-sub">Cliquez sur un produit pour commander via WhatsApp</div>
+        </div>
+      </div>
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </div>
+
+  <!-- MODAL COMMANDE PRODUIT -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalProductName"></h2>
+        <button class="modal-close" onclick="closeModal('orderModal')">✕</button>
+      </div>
+      <div class="modal-product-img" id="modalProductImg"></div>
+      <div class="modal-product-desc" id="modalProductDesc"></div>
+
+      <div class="form-group">
+        <label>Choisir une couleur</label>
+        <div class="color-picker-row" id="modalColors"></div>
+        <div class="selected-color-name" id="selectedColorName"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Choisir une taille</label>
+        <div class="sizes-row" id="modalSizes"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Prix par taille</label>
+        <div class="price-grid" id="modalPrices"></div>
+      </div>
+
+      <div class="payment-info" id="modalPaymentInfo"></div>
+
+      <button class="btn-wp" id="whatsappBtn" onclick="orderWhatsApp()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Commander via WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE : DASHBOARD ADMIN
+  ═══════════════════════════════════════ -->
+  <div class="page" id="page-admin">
+    <div class="dash-layout">
+      <div class="dash-nav" id="adminSidebar">
+        <div class="dash-brand">✦ Admin</div>
+        <div class="dash-nav-item active" onclick="adminTab('overview',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+          Vue d'ensemble
+        </div>
+        <div class="dash-nav-item" onclick="adminTab('boutiques',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Boutiques
+        </div>
+        <div class="dash-nav-item" onclick="adminTab('vendeuses',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg>
+          Vendeuses
+        </div>
+        <div class="dash-nav-item" onclick="adminTab('paiements',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" stroke-width="2"/><line x1="1" y1="10" x2="23" y2="10" stroke-width="2"/></svg>
+          Paiements
+        </div>
+        <div class="dash-nav-item" onclick="adminTab('ventes',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2"/></svg>
+          Ventes globales
+        </div>
+        <div class="dash-nav-sep"></div>
+        <div class="dash-nav-item" onclick="showPage('home')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Voir la vitrine
+        </div>
+        <div class="dash-nav-item danger" onclick="logout()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Déconnexion
+        </div>
+      </div>
+
+      <div class="dash-content">
+
+        <!-- OVERVIEW -->
+        <div class="panel active" id="admin-overview">
+          <div class="dash-title">Vue d'ensemble</div>
+          <div class="dash-sub" id="adminDate"></div>
+          <div class="stat-cards" id="adminStats"></div>
+          <div class="dash-grid-2">
+            <div class="card">
+              <div class="card-title">Dernières ventes <span class="badge badge-gold">Live</span></div>
+              <table>
+                <thead><tr><th>Produit</th><th>Boutique</th><th>Prix</th><th>Date</th><th>Statut</th></tr></thead>
+                <tbody id="adminSalesTable"></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-title">Boutiques actives</div>
+              <div id="adminShopsQuick"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOUTIQUES -->
+        <div class="panel" id="admin-boutiques">
+          <div class="dash-title">Gérer les boutiques</div>
+          <div class="dash-sub">Créez et gérez les boutiques des vendeuses</div>
+          <button class="btn btn-gold" onclick="showNewBoutiqueForm()" style="margin-bottom:1.5rem">+ Nouvelle boutique</button>
+          <div id="newBoutiqueForm" style="display:none" class="card">
+            <div class="card-title">Créer une boutique</div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Nom de la boutique *</label>
+                <input type="text" id="nb_name" placeholder="Ex: Boutique Fatima">
+              </div>
+              <div class="form-group">
+                <label>Emoji / Icône *</label>
+                <input type="text" id="nb_emoji" placeholder="👗" style="font-size:1.5rem;text-align:center">
+              </div>
+              <div class="form-group">
+                <label>Nom de la vendeuse *</label>
+                <input type="text" id="nb_owner" placeholder="Prénom Nom">
+              </div>
+              <div class="form-group">
+                <label>WhatsApp (avec indicatif) *</label>
+                <input type="text" id="nb_whatsapp" placeholder="212612345678">
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label>Description</label>
+                <textarea id="nb_desc" rows="2" placeholder="Description de la boutique..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Catégorie</label>
+                <select id="nb_cat">
+                  <option value="mode">Mode</option>
+                  <option value="maison">Maison</option>
+                  <option value="beaute">Beauté</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Mot de passe vendeuse *</label>
+                <input type="text" id="nb_pass" placeholder="Mot de passe pour se connecter">
+              </div>
+            </div>
+            <div style="display:flex;gap:1rem;margin-top:1rem">
+              <button class="btn btn-gold" onclick="createBoutique()">Créer la boutique</button>
+              <button class="btn btn-outline" onclick="document.getElementById('newBoutiqueForm').style.display='none'">Annuler</button>
+            </div>
+          </div>
+          <div id="adminBoutiquesList"></div>
+        </div>
+
+        <!-- VENDEUSES -->
+        <div class="panel" id="admin-vendeuses">
+          <div class="dash-title">Vendeuses</div>
+          <div class="dash-sub">Toutes les vendeuses actives sur la plateforme</div>
+          <div id="vendeusesTable"></div>
+        </div>
+
+        <!-- PAIEMENTS -->
+        <div class="panel" id="admin-paiements">
+          <div class="dash-title">Modes de paiement</div>
+          <div class="dash-sub">Définissez les modes de paiement acceptés pour chaque boutique</div>
+          <div id="paiementsContent"></div>
+        </div>
+
+        <!-- VENTES GLOBALES -->
+        <div class="panel" id="admin-ventes">
+          <div class="dash-title">Ventes globales</div>
+          <div class="dash-sub">Toutes les ventes déclarées sur la plateforme</div>
+          <div id="ventesContent"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PAGE : DASHBOARD VENDEUSE
+  ═══════════════════════════════════════ -->
+  <div class="page" id="page-vendeuse">
+    <div class="dash-layout">
+      <div class="dash-nav">
+        <div class="dash-brand" id="vendBrand">🏪</div>
+        <div class="dash-nav-item active" onclick="vendTab('overview',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+          Dashboard
+        </div>
+        <div class="dash-nav-item" onclick="vendTab('products',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path stroke-width="2" d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          Mes produits
+        </div>
+        <div class="dash-nav-item" onclick="vendTab('ventes',this)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2"/></svg>
+          Déclarer vente
+        </div>
+        <div class="dash-nav-sep"></div>
+        <div class="dash-nav-item" onclick="showPage('home')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          Voir la vitrine
+        </div>
+        <div class="dash-nav-item danger" onclick="logout()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Déconnexion
+        </div>
+      </div>
+
+      <div class="dash-content">
+
+        <!-- OVERVIEW -->
+        <div class="panel active" id="vend-overview">
+          <div class="dash-title" id="vendName"></div>
+          <div class="dash-sub">Votre tableau de bord personnel</div>
+          <div class="stat-cards" id="vendStats"></div>
+          <div class="card">
+            <div class="card-title">Mes dernières ventes</div>
+            <table>
+              <thead><tr><th>Produit</th><th>Couleur</th><th>Taille</th><th>Prix vendu</th><th>Date</th></tr></thead>
+              <tbody id="vendSalesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PRODUITS -->
+        <div class="panel" id="vend-products">
+          <div class="dash-title">Mes produits</div>
+          <div class="dash-sub">Gérez votre catalogue de produits</div>
+          <button class="btn btn-gold" onclick="showAddProduct()" style="margin-bottom:1.5rem">+ Ajouter un produit</button>
+          <div id="addProductForm" style="display:none" class="card">
+            <div class="card-title">Nouveau produit</div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Nom du produit *</label>
+                <input type="text" id="p_name" placeholder="Ex: Robe Florée">
+              </div>
+              <div class="form-group">
+                <label>Emoji *</label>
+                <input type="text" id="p_emoji" placeholder="👗" style="font-size:1.5rem;text-align:center">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="p_desc" rows="2" placeholder="Décrivez votre produit..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Couleurs disponibles</label>
+              <div class="color-add-row">
+                <input type="color" id="p_color_picker" style="width:44px;height:36px;padding:2px;cursor:pointer;flex-shrink:0;border-radius:8px;border:1px solid var(--border)">
+                <input type="text" id="p_color_name" placeholder="Nom de la couleur (ex: Rouge bordeaux)" style="flex:1">
+                <button class="btn btn-outline btn-sm" onclick="addProductColor()">+ Ajouter</button>
+              </div>
+              <div class="selected-colors-list" id="selectedColors"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Tailles & Prix</label>
+              <div id="sizePriceRows"></div>
+              <div class="color-add-row" style="margin-top:8px">
+                <input type="text" id="p_size" placeholder="Taille (S, M, L, 38...)" style="flex:1">
+                <input type="number" id="p_price" placeholder="Prix (MRU)" style="flex:1">
+                <button class="btn btn-outline btn-sm" onclick="addSizePrice()">+ Ajouter</button>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1rem">
+              <button class="btn btn-gold" onclick="saveProduct()">Enregistrer le produit</button>
+              <button class="btn btn-outline" onclick="document.getElementById('addProductForm').style.display='none'">Annuler</button>
+            </div>
+          </div>
+          <div id="vendProductsList"></div>
+        </div>
+
+        <!-- VENTES -->
+        <div class="panel" id="vend-ventes">
+          <div class="dash-title">Déclarer une vente</div>
+          <div class="dash-sub">Enregistrez les ventes réalisées via WhatsApp — elles s'affichent dans votre tableau de bord</div>
+          <div class="card">
+            <div class="card-title">Nouvelle vente</div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Produit vendu *</label>
+                <select id="v_product" onchange="updateVenteSizes()">
+                  <option value="">-- Choisir un produit --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Couleur vendue *</label>
+                <select id="v_color">
+                  <option value="">-- Choisir une couleur --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Taille vendue *</label>
+                <select id="v_size" onchange="autoFillPrice()">
+                  <option value="">-- Choisir une taille --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Prix vendu (MRU) *</label>
+                <input type="number" id="v_price" placeholder="0">
+              </div>
+            </div>
+            <button class="btn btn-gold" onclick="declarerVente()">✓ Déclarer la vente</button>
+          </div>
+
+          <div class="card" style="margin-top:1.5rem">
+            <div class="card-title">Historique de mes ventes</div>
+            <table>
+              <thead><tr><th>Produit</th><th>Couleur</th><th>Taille</th><th>Prix</th><th>Date</th></tr></thead>
+              <tbody id="ventesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

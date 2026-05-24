@@ -1,0 +1,42 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold:          #C9A84C;
+  --gold-light:    #E8D5A3;
+  --gold-dark:     #8B6914;
+  --bg:            #0F0E0B;
+  --bg2:           #1A1815;
+  --bg3:           #242220;
+  --bg4:           #2E2B28;
+  --text:          #F5F0E8;
+  --text2:         #C4B89A;
+  --text3:         #8A7D6B;
+  --border:        #3A3530;
+  --border2:       #4A453F;
+  --success:       #52B788;
+  --danger:        #E06C72;
+  --warning:       #EF9F27;
+  --wp:            #25D366;
+  --touch-target:  48px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; min-height: 100dvh; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+input, select, textarea { font-family: inherit; font-size: 16px; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.animate-in { animation: fadeIn .35s ease forwards; }
+
+/* Tables responsive */
+.table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
