@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as api from '../api';
+import { uploadImage } from '../supabase';
 import s from './AdminDashboard.module.css';
 
 const TABS = [
@@ -220,12 +221,15 @@ export default function AdminDashboard() {
                           id="logoInput"
                           accept="image/*"
                           style={{display:'none'}}
-                          onChange={e => {
+                          onChange={async e => {
                             const file = e.target.files[0];
                             if (!file) return;
-                            const reader = new FileReader();
-                            reader.onload = ev => setForm({...form, logo: ev.target.result});
-                            reader.readAsDataURL(file);
+                            try {
+                              const url = await uploadImage(file, 'logos');
+                              setForm(f => ({...f, logo: url}));
+                            } catch(err) {
+                              alert('Erreur upload logo');
+                            }
                           }}
                         />
                         {form.logo
