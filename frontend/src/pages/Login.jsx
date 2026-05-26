@@ -50,10 +50,6 @@ export default function Login() {
 
         <button className={s.btnBack} onClick={() => navigate('/')}>← Voir les boutiques</button>
 
-        <div className={s.hint}>
-          <p><strong>Admin :</strong> admin@souk.ma / admin123</p>
-          <p>Les vendeuses se connectent avec l'email et le mot de passe créés par l'admin</p>
-        </div>
       </div>
     </div>
   );
